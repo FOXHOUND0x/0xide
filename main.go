@@ -13,6 +13,7 @@ var images = []struct {
 	{"traefik-local:2.10", "./dockerfiles/traefik"},
 	{"consul-local:1.15.4", "./dockerfiles/consul"},
 	{"vault-local:1.13.3", "./dockerfiles/vault"},
+	{"prometheus-local:v2.55.0-rc.0", "./dockerfiles/prometheus"},
 }
 
 func main() {
@@ -23,17 +24,22 @@ func main() {
 			}
 		}
 
-		consulContainer, err := docker.StartConsulContainer(ctx, "consul-local:1.15.4")
+		_, err := docker.StartConsulContainer(ctx, "consul-local:1.15.4")
 		if err != nil {
 			return err
 		}
 
-		traefikContainer, err := docker.StartTraefikContainer(ctx, "traefik-local:2.10", []pulumi.Resource{consulContainer})
+		_, err = docker.StartTraefikContainer(ctx, "traefik-local:2.10", nil)
 		if err != nil {
 			return err
 		}
 
-		_, err = docker.StartVaultContainer(ctx, "vault-local:1.13.3", []pulumi.Resource{traefikContainer})
+		_, err = docker.StartVaultContainer(ctx, "vault-local:1.13.3", nil)
+		if err != nil {
+			return err
+		}
+
+		_, err = docker.StartPrometheusContainer(ctx, nil)
 		if err != nil {
 			return err
 		}

@@ -74,6 +74,19 @@ func StartVaultContainer(ctx *pulumi.Context, imageName string, dependsOn []pulu
 	return newContainer(ctx, "vault-container", args, dependsOn)
 }
 
+func StartPrometheusContainer(ctx *pulumi.Context, dependsOn []pulumi.Resource) (*docker.Container, error) {
+	args := &containerArgs{
+		Image: pulumi.String("prom/prometheus:v2.55.0-rc.0"),
+		Ports: docker.ContainerPortArray{
+			&docker.ContainerPortArgs{
+				Internal: pulumi.Int(9091),
+				External: pulumi.Int(9091),
+			},
+		},
+	}
+	return newContainer(ctx, "prometheus-container", args, dependsOn)
+}
+
 func getTraefikLabels(port int) docker.ContainerLabelArray {
 	return docker.ContainerLabelArray{
 		&docker.ContainerLabelArgs{

@@ -1,0 +1,26 @@
+# prometheus.yml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'consul'
+    metrics_path: '/v1/agent/metrics'
+    params:
+      format: ['prometheus']
+    static_configs:
+      - targets: ['consul-container:8500']
+
+  - job_name: 'vault'
+    metrics_path: '/v1/sys/metrics'
+    params:
+      format: ['prometheus']
+    static_configs:
+      - targets: ['vault-container:8200']
+
+  - job_name: 'traefik'
+    static_configs:
+      - targets: ['traefik-container:8080']
